@@ -1,10 +1,16 @@
 const express = require('express');
 const morgan = require('morgan');
 const app = express();
+const connectDB = require('./config/db');
+
+
+//connectDB
+connectDB();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
+
 
 app.get('/', async(req, res)=>{
     try {
