@@ -1,25 +1,21 @@
-const express = require('express');
-const morgan = require('morgan');
+const express = require("express");
+const morgan = require("morgan");
 const app = express();
-const connectDB = require('./config/db');
-
-
-//connectDB
-connectDB();
+const db = require("./models");
+require("dotenv").config();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(morgan('dev'));
+app.use(morgan("dev"));
 
-
-app.get('/', async(req, res)=>{
-    try {
-        res.send({message: 'Welcome to Practical Exam!'});
-    } catch (error) {
-        res.send({error: error.message});
-    }
-});
+// routes
+app.use("/", require("./router"));
 
 
 const PORT = process.env.PORT || 9999;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+  
+  // Connect to MongoDB
+  db.connectDB();
+});
