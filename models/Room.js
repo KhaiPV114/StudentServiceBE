@@ -1,14 +1,24 @@
 const mongoose = require("mongoose");
 
-const roomSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  location: { type: String },
-}, { timestamps: true });
+const roomSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: [true, "Room's name is required"],
+      unique: true,
+    },
+    location: {
+      type: String,
+      enum: ["ALPHA", "BETA", "DELTA"],
+      required: [true, "Room's location is required"],
+    },
+  },
+  { timestamps: true }
+);
 
 const Room = mongoose.model("Room", roomSchema, "rooms");
 
 module.exports = Room;
-
 
 //fake data
 /*

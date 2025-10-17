@@ -9,8 +9,11 @@ app.use(express.urlencoded({ extended: true }));
 app.use(morgan("dev"));
 
 // routes
-app.use("/", require("./router"));
+app.use(require("./router"));
 
+
+//middleware handle error
+app.use(require("./middleware/error.handler"));
 
 const PORT = process.env.PORT || 9999;
 app.listen(PORT, () => {

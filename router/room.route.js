@@ -6,4 +6,5 @@ const { RoomController } = require('../controllers');
 roomRouter.get('/', RoomController.getAllRooms);
 
 
+
 module.exports = roomRouter;
