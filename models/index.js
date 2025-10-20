@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const User = require('./User');
-const Room = require('./Room');
+const { Room, seedRooms } = require('./Room');
 const Slot = require('./Slot');
 const RoomBooking = require('./RoomBooking');
 
@@ -24,6 +24,7 @@ db.connectDB = async () => {
     .connect(process.env.MONGO_URI)
     .then(() => {
       console.log("MongoDB connected");
+      seedRooms();
     })
     .catch((error) => {
       console.error("MongoDB connection error: ", error.message);
