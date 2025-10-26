@@ -8,9 +8,10 @@ const userRouter = require('./user.route');
 const authRouter = require('./auth.route');
 
 // Routes
-router.use('/rooms', roomRouter);
-router.use('/users', userRouter);
-router.use('/auth', authRouter); // Authentication
+// Thêm tiền tố /api vào đây
+router.use('/api/rooms', roomRouter);
+router.use('/api/users', userRouter);
+router.use('/api/auth', authRouter); // Authentication
 
 
 // Handle 404 (if not matched any route)
@@ -19,4 +20,3 @@ router.use((req, res, next) => {
 });
 
 module.exports =  router;
-

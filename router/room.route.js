@@ -20,6 +20,7 @@ roomRouter.post('/', createRoom);
 roomRouter.get('/:id', getRoomById);
 
 // 4. Route to update room by ID (UPDATE)
+// Route này sẽ dùng cho cả 2 yêu cầu của bạn
 roomRouter.put('/:id', updateRoom);
 // Hoặc sử dụng .patch('/:id', updateRoom); nếu bạn muốn cập nhật một phần (partial update)
 
