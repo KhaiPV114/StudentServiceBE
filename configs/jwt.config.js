@@ -10,6 +10,7 @@ module.exports = {
       const payload = {
         email: user.email,
         name: user.name,
+        role: user.role,
       };
 
   const secret = process.env.ACCESS_JWT_SECRET;
