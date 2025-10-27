@@ -13,16 +13,8 @@ const roomSchema = new mongoose.Schema(
       required: [true, "Room's location is required"],
     },
   },
-  { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
+  { timestamps: true }
 );
-
-// Virtual: bookings for a room
-roomSchema.virtual('bookings', {
-  ref: 'RoomBooking',
-  localField: '_id',
-  foreignField: 'roomId',
-  justOne: false,
-});
 
 const Room = mongoose.model("Room", roomSchema, "rooms");
 

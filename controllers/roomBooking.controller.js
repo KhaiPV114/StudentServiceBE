@@ -40,13 +40,12 @@ module.exports = {
     try {
       const { userId, roomId, slotId, date } = req.body;
 
-      // Create booking in PENDING state. Staff will APPROVE/REJECT later.
-      // But prevent creating if there's already an APPROVED booking for same room/slot/date
-      const conflict = await RoomBooking.findOne({ roomId, slotId, date, status: "APPROVED" });
-      if (conflict)
-        return res.status(400).json({ success: false, message: "This room and slot is already approved/booked for this date" });
+      // Check if booking already exists for same room/slot/date
+      const existing = await RoomBooking.findOne({ roomId, slotId, date, status: "BOOKED" });
+      if (existing)
+        return res.status(400).json({ success: false, message: "This room and slot is already booked for this date" });
 
-      const newBooking = await RoomBooking.create({ userId, roomId, slotId, date, status: 'PENDING' });
+      const newBooking = await RoomBooking.create({ userId, roomId, slotId, date });
 
       const populatedBooking = await RoomBooking.findById(newBooking._id)
         .populate("userId", "name email role")
@@ -74,7 +73,6 @@ module.exports = {
       res.status(500).json({ success: false, message: err.message });
     }
   },
-
   // Approve booking (staff)
   approveBooking: async (req, res) => {
     try {
