@@ -5,7 +5,8 @@ const roomBookingSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   slotId: { type: mongoose.Schema.Types.ObjectId, ref: "Slot", required: true },
   date: { type: String, required: true }, // YYYY-MM-DD
-  status: { type: String, enum: ["BOOKED", "CANCELLED"], default: "BOOKED" },
+  // status flow: PENDING -> APPROVED | REJECTED; CANCELLED when user cancels
+  status: { type: String, enum: ["PENDING", "APPROVED", "REJECTED", "CANCELLED"], default: "PENDING" },
 }, { timestamps: true });
 
 const RoomBooking = mongoose.model("RoomBooking", roomBookingSchema, "roombookings");

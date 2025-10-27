@@ -37,8 +37,16 @@ const userSchema = new mongoose.Schema(
       default: "ACTIVE",
     },
   },
-  { timestamps: true }
+  { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
+
+// Virtual: bookings made by user
+userSchema.virtual('bookings', {
+  ref: 'RoomBooking',
+  localField: '_id',
+  foreignField: 'userId',
+  justOne: false,
+});
 
 
 userSchema.methods.isValidPassword = async function (password) {
