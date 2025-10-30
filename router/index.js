@@ -7,12 +7,16 @@ const roomRouter = require('./room.route');
 const userRouter = require('./user.route');
 const authRouter = require('./auth.route');
 const roomBookingRouter = require('./roomBooking.route');
+const eventRouter = require("./event.router")
+const ticketRouter = require("./ticket.router")
 
 // Routes
 router.use('/rooms', roomRouter);
 router.use('/users', userRouter);
 router.use('/auth', authRouter); // Authentication
 router.use('/roombookings', roomBookingRouter)
+router.use("/events", eventRouter)
+router.use("/tickets", ticketRouter)
 
 
 // Handle 404 (if not matched any route)

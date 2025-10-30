@@ -2,15 +2,13 @@ const express = require("express");
 const morgan = require("morgan");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
-const eventRouter = require("./router/event.router");
-const ticketRouter = require("./router/ticket.router");
 const cors = require("cors");
-
 const app = express();
 const db = require("./models");
 
 require("dotenv").config();
 
+//built-in middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan("dev"));
@@ -19,7 +17,7 @@ app.use(cors());
 // routes
 app.use(require("./router"));
 
-//middleware handle error
+//middlewares handle error
 app.use(require("./middleware/error.handler"));
 
 // Connect MongoDB (Giữ cả db.connectDB() từ branch hiện tại)

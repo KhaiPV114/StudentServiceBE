@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
-require('./User'); // 👈 Thêm dòng này
+
+
 const ticketSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   staffId: { type: mongoose.Schema.Types.ObjectId, ref: "User" }, // nhân viên xử lý

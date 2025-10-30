@@ -13,8 +13,22 @@ module.exports = {
         } catch (error) {
             res.status(500).json({ message: error.message });
         }
-    }
+    },
 
     //get room by id
+    getRoomById: async (req, res, next) => {
+        try {
+            const {id} = req.param
+            const room = await Room.find({_id: id});
 
+            if(!room){
+                return res.status(400).send("Room is not existed!")
+            }
+
+            res.status(200).json(room)
+
+        } catch (error) {
+            next()
+        }
+    },
 }
