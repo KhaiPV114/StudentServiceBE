@@ -51,3 +51,58 @@ exports.deleteEvent = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+// Tham gia sự kiện
+exports.joinEvent = async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    const { userId } = req.body;
+
+    const event = await Event.findById(eventId);
+    if (!event) return res.status(404).json({ message: "Event not found" });
+
+    // Kiểm tra nếu user đã tham gia
+    if (event.participants.includes(userId)) {
+      return res.status(400).json({ message: "User already joined this event" });
+    }
+
+    // Nếu có giới hạn số lượng
+    if (event.capacity && event.participants.length >= event.capacity) {
+      return res.status(400).json({ message: "Event is full" });
+    }
+
+    event.participants.push(userId);
+    await event.save();
+
+    res.json({ message: "Joined event successfully", event });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+// Rời khỏi sự kiện (hủy đăng ký)
+exports.leaveEvent = async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    const { userId } = req.body;
+
+    const event = await Event.findById(eventId);
+    if (!event) return res.status(404).json({ message: "Event not found" });
+
+    // Kiểm tra nếu user chưa tham gia
+    if (!event.participants.includes(userId)) {
+      return res.status(400).json({ message: "User has not joined this event" });
+    }
+
+    // Xóa user khỏi danh sách participants
+    event.participants = event.participants.filter(
+      (id) => id.toString() !== userId
+    );
+    await event.save();
+
+    res.json({ message: "Left event successfully", event });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
