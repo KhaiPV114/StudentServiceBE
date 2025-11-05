@@ -54,9 +54,9 @@ module.exports = {
       }
 
       const accessToken = await JwtConfig.signAccessToken(user);
-      const refreshToken = await JwtConfig.signRefreshToken(user.id);
+      // const refreshToken = await JwtConfig.signRefreshToken(user.id);
 
-      res.send({ accessToken, refreshToken });
+      res.send({ accessToken });
     } catch (error) {
       if (error.errors) {
         const errors = Object.values(error.errors).map((err) => err.message);

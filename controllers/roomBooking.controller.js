@@ -1,24 +1,28 @@
-const db = require('../models');
+const db = require("../models");
 const RoomBooking = db.roombookings;
 const Room = db.rooms;
 const User = db.users;
 const Slot = db.slots;
 
 module.exports = {
-    //get all room bookings
-    getAllRoomBookings: async (req,res) =>{
-        try {
-            const roomBookings = await RoomBooking.find()
-            .populate('roomId', "name location")
-            .populate('userId', "name email")
-            .populate('slotId', "startTime endTime")
-            res.status(200).json(roomBookings, {message: "Room bookings retrieved successfully"})
-        } catch (error) {
-            res.status(500).json({ message: error.message });
-        }
-    },
+  //get all room bookings
+  getAllRoomBookings: async (req, res) => {
+    try {
+      const roomBookings = await RoomBooking.find()
+        .populate("roomId", "name location")
+        .populate("userId", "name email")
+        .populate("slotId", "startTime endTime");
+      res
+        .status(200)
+        .json(roomBookings, {
+          message: "Room bookings retrieved successfully",
+        });
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  },
 
-    // GET booking by ID
+  // GET booking by ID
   getRoomBookingById: async (req, res) => {
     try {
       const booking = await RoomBooking.findById(req.params.id)
@@ -27,7 +31,9 @@ module.exports = {
         .populate("slotId", "slotNumber name startTime endTime");
 
       if (!booking)
-        return res.status(404).json({ success: false, message: "Booking not found" });
+        return res
+          .status(404)
+          .json({ success: false, message: "Booking not found" });
 
       res.status(200).json({ success: true, data: booking });
     } catch (err) {
@@ -41,11 +47,26 @@ module.exports = {
       const { userId, roomId, slotId, date } = req.body;
 
       // Check if booking already exists for same room/slot/date
-      const existing = await RoomBooking.findOne({ roomId, slotId, date, status: "BOOKED" });
+      const existing = await RoomBooking.findOne({
+        roomId,
+        slotId,
+        date,
+        status: "BOOKED",
+      });
       if (existing)
-        return res.status(400).json({ success: false, message: "This room and slot is already booked for this date" });
+        return res
+          .status(400)
+          .json({
+            success: false,
+            message: "This room and slot is already booked for this date",
+          });
 
-      const newBooking = await RoomBooking.create({ userId, roomId, slotId, date });
+      const newBooking = await RoomBooking.create({
+        userId,
+        roomId,
+        slotId,
+        date,
+      });
 
       const populatedBooking = await RoomBooking.findById(newBooking._id)
         .populate("userId", "name email role")
@@ -63,12 +84,16 @@ module.exports = {
     try {
       const booking = await RoomBooking.findById(req.params.id);
       if (!booking)
-        return res.status(404).json({ success: false, message: "Booking not found" });
+        return res
+          .status(404)
+          .json({ success: false, message: "Booking not found" });
 
       booking.status = "CANCELLED";
       await booking.save();
 
-      res.status(200).json({ success: true, message: "Booking cancelled successfully" });
+      res
+        .status(200)
+        .json({ success: true, message: "Booking cancelled successfully" });
     } catch (err) {
       res.status(500).json({ success: false, message: err.message });
     }
@@ -77,9 +102,15 @@ module.exports = {
   approveBooking: async (req, res) => {
     try {
       const booking = await RoomBooking.findById(req.params.id);
-      if (!booking) return res.status(404).json({ success: false, message: 'Booking not found' });
+      if (!booking)
+        return res
+          .status(404)
+          .json({ success: false, message: "Booking not found" });
 
-      if (booking.status === 'APPROVED') return res.status(400).json({ success: false, message: 'Booking already approved' });
+      if (booking.status === "APPROVED")
+        return res
+          .status(400)
+          .json({ success: false, message: "Booking already approved" });
 
       // Check conflict: can't approve if another APPROVED booking exists for same room/slot/date
       const conflict = await RoomBooking.findOne({
@@ -87,17 +118,23 @@ module.exports = {
         roomId: booking.roomId,
         slotId: booking.slotId,
         date: booking.date,
-        status: 'APPROVED'
+        status: "APPROVED",
       });
-      if (conflict) return res.status(400).json({ success: false, message: 'Another approved booking exists for this room/slot/date' });
+      if (conflict)
+        return res
+          .status(400)
+          .json({
+            success: false,
+            message: "Another approved booking exists for this room/slot/date",
+          });
 
-      booking.status = 'APPROVED';
+      booking.status = "APPROVED";
       await booking.save();
 
       const populated = await RoomBooking.findById(booking._id)
-        .populate('userId', 'name email')
-        .populate('roomId', 'name location')
-        .populate('slotId', 'slotNumber name startTime endTime');
+        .populate("userId", "name email")
+        .populate("roomId", "name location")
+        .populate("slotId", "slotNumber name startTime endTime");
 
       return res.status(200).json({ success: true, data: populated });
     } catch (err) {
@@ -109,14 +146,22 @@ module.exports = {
   rejectBooking: async (req, res) => {
     try {
       const booking = await RoomBooking.findById(req.params.id);
-      if (!booking) return res.status(404).json({ success: false, message: 'Booking not found' });
+      if (!booking)
+        return res
+          .status(404)
+          .json({ success: false, message: "Booking not found" });
 
-      if (booking.status === 'REJECTED') return res.status(400).json({ success: false, message: 'Booking already rejected' });
+      if (booking.status === "REJECTED")
+        return res
+          .status(400)
+          .json({ success: false, message: "Booking already rejected" });
 
-      booking.status = 'REJECTED';
+      booking.status = "REJECTED";
       await booking.save();
 
-      return res.status(200).json({ success: true, message: 'Booking rejected' });
+      return res
+        .status(200)
+        .json({ success: true, message: "Booking rejected" });
     } catch (err) {
       return res.status(500).json({ success: false, message: err.message });
     }
@@ -129,16 +174,28 @@ module.exports = {
       const { roomId, slotId, date } = req.query;
 
       if (!roomId || !slotId || !date) {
-        return res.status(400).json({ success: false, message: 'roomId, slotId and date are required as query parameters' });
+        return res
+          .status(400)
+          .json({
+            success: false,
+            message: "roomId, slotId and date are required as query parameters",
+          });
       }
 
-      const existing = await RoomBooking.findOne({ roomId, slotId, date, status: "BOOKED" })
-        .populate('userId', 'name email')
-        .populate('roomId', 'name location')
-        .populate('slotId', 'slotNumber name startTime endTime');
+      const existing = await RoomBooking.findOne({
+        roomId,
+        slotId,
+        date,
+        status: "BOOKED",
+      })
+        .populate("userId", "name email")
+        .populate("roomId", "name location")
+        .populate("slotId", "slotNumber name startTime endTime");
 
       if (existing) {
-        return res.status(200).json({ success: true, conflict: true, booking: existing });
+        return res
+          .status(200)
+          .json({ success: true, conflict: true, booking: existing });
       }
 
       return res.status(200).json({ success: true, conflict: false });
@@ -146,4 +203,6 @@ module.exports = {
       return res.status(500).json({ success: false, message: err.message });
     }
   },
-}
+
+  
+};

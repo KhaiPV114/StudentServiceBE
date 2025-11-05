@@ -8,7 +8,8 @@ const userRouter = require('./user.route');
 const authRouter = require('./auth.route');
 const roomBookingRouter = require('./roomBooking.route');
 const eventRouter = require("./event.router")
-const ticketRouter = require("./ticket.router")
+const ticketRouter = require("./ticket.router");
+const slotRouter = require('./slot.route');
 
 // Routes
 router.use('/rooms', roomRouter);
@@ -17,6 +18,7 @@ router.use('/auth', authRouter); // Authentication
 router.use('/roombookings', roomBookingRouter)
 router.use("/events", eventRouter)
 router.use("/tickets", ticketRouter)
+router.use("/slots", slotRouter)
 
 
 // Handle 404 (if not matched any route)

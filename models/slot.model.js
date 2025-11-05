@@ -7,7 +7,7 @@ const slotSchema = new mongoose.Schema({
   endTime: { type: String, required: true },
 });
 
-const Slot = mongoose.model("Slot", slotSchema, "slots ");
+const Slot = mongoose.model("Slot", slotSchema, "slots");
 
 module.exports = Slot;
 
