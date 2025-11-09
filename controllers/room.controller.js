@@ -1,76 +1,77 @@
-
-const db = require('../models');
+const db = require("../models");
+const mongoose = require("mongoose");
 
 const Room = db.rooms;
 const RoomBooking = db.roombookings;
 
 module.exports = {
-    //get all rooms
-    getAllRooms: async (req, res) => {
-        try {
-            const rooms = await Room.find();
-            res.status(200).json(rooms, { message: "Rooms retrieved successfully" });
-        } catch (error) {
-            res.status(500).json({ message: error.message });
-        }
-    },
+  //get all rooms
+  getAllRooms: async (req, res) => {
+    try {
+      const rooms = await Room.find();
+      res.status(200).json(rooms, { message: "Rooms retrieved successfully" });
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  },
 
-    //get room by id
-    getRoomById: async (req, res, next) => {
-        try {
-            const {id} = req.param
-            const room = await Room.find({_id: id});
+  //get room by id
+  getRoomById: async (req, res, next) => {
+    try {
+      const { id } = req.param;
+      const room = await Room.find({ _id: id });
 
-            if(!room){
-                return res.status(400).send("Room is not existed!")
-            }
+      if (!room) {
+        return res.status(400).send("Room is not existed!");
+      }
 
-            res.status(200).json(room)
+      res.status(200).json(room);
+    } catch (error) {
+      next();
+    }
+  },
 
-        } catch (error) {
-            next()
-        }
-    },
-
-    //get room availability
+  //get room availability
   getRoomAvailability: async (req, res) => {
     try {
       const { location, slotId, date } = req.params;
 
-        const newDate = new Date(`${date}T00:00:00.000Z`);
-        
-
       if (!location || !slotId || !date) {
-        return res
-          .status(400)
-          .json({
-            success: false,
-            message:
-              "Location, slotId and date are required as query parameters",
-          });
+        return res.status(400).json({
+          success: false,
+          message: "Location, slotId and date are required as params",
+        });
       }
 
-      const rooms = await Room.find({
-        location: location
-      });
+      // Lấy toàn bộ phòng ở location đó
+      const roomsAtLocation = await Room.find({ location }).lean();
 
-      const bookedRooms = await RoomBooking.find({
-        slotId,
-        date: newDate,
-        status: "BOOKED",
-      }).select("roomId");
+      // Lấy tất cả booking để lọc
+      const allBookings = await RoomBooking.find().lean();
 
-      const bookedRoomIds = bookedRooms.map((booking) =>
-        booking.roomId.toString()
+      // Lấy danh sách roomId đã bị BOOKED trong ngày và slot đó
+      const bookedRoomIds = allBookings
+        .filter((b) => {
+          const dbDate = new Date(b.date).toISOString().split("T")[0];
+          return (
+            dbDate === date &&
+            String(b.slotId) === String(slotId) &&
+            (b.status === "BOOKED" || b.status === "PENDING")
+          );
+        })
+        .map((b) => String(b.roomId));
+
+      // Lọc ra các phòng chưa bị book
+      const availableRooms = roomsAtLocation.filter(
+        (room) => !bookedRoomIds.includes(String(room._id))
       );
 
-      const filteredRooms = rooms.filter(
-        (room) => !bookedRoomIds.includes(room._id.toString())
+      return res.status(200).json(
+        availableRooms
       );
-
-      return res.status(200).json({ success: true, data: filteredRooms });
     } catch (err) {
+      console.error("Error in getRoomAvailability:", err);
       return res.status(500).json({ success: false, message: err.message });
     }
   },
-}
+};

@@ -23,8 +23,10 @@ module.exports = {
 
             const total = await User.countDocuments(query);
 
+            const filterUsers = users.filter(user => user.role !== "ADMIN")
+
             res.json({
-                users,
+                filterUsers,
                 currentPage: page,
                 totalPages: Math.ceil(total / limit),
                 totalUsers: total
