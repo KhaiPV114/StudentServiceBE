@@ -5,7 +5,7 @@ const roomBookingSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   slotId: { type: mongoose.Schema.Types.ObjectId, ref: "Slot", required: true },
   date: { type: Date, required: true }, // YYYY-MM-DD
-  status: { type: String, enum: ["BOOKED", "CANCELLED"], default: "BOOKED" },
+  status: { type: String, enum: ["BOOKED", "CANCELLED", "PENDING"], default: "BOOKED" },
 }, { timestamps: true });
 
 const RoomBooking = mongoose.model("RoomBooking", roomBookingSchema, "roombookings");

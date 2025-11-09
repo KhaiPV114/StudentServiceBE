@@ -11,6 +11,7 @@ module.exports = {
         email: user.email,
         name: user.name,
         role: user.role,
+        id: user._id,
       };
 
   const secret = process.env.ACCESS_JWT_SECRET;

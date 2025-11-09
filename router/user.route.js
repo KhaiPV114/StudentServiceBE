@@ -86,9 +86,6 @@ const { verifyAccessToken } = require('../configs/jwt.config');
  */
 userRouter.post('/', UserController.createUser);
 
-// Protected routes (require authentication)
-userRouter.use(verifyAccessToken);
-
 /**
  * @swagger
  * /users:

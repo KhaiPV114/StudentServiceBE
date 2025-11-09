@@ -16,5 +16,7 @@ roomBookingRouter.get('/check', RoomBookingController.checkDuplicateBooking);
 roomBookingRouter.post('/:id/approve', RoomBookingController.approveBooking);
 // Route for staff to reject a booking
 roomBookingRouter.post('/:id/reject', RoomBookingController.rejectBooking);
+//get bookings by slotId
+roomBookingRouter.get('/slot/:slotId', RoomBookingController.getRoomBookingsBySlotId);
 
 module.exports = roomBookingRouter;
