@@ -9,7 +9,7 @@ const eventSchema = new mongoose.Schema({
     enum: ["club_event", "workshop", "sports", "career_fair"], // thêm career_fair
     required: true 
   },
-  organizerId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+  organizerId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
   location: String,
   startTime: { type: Date, required: true },
   endTime: { type: Date, required: true },
