@@ -1,5 +1,5 @@
 const Event = require("../models/event.model");
-
+const mongoose = require("mongoose");
 // Tạo sự kiện
 exports.createEvent = async (req, res) => {
   try {
@@ -52,57 +52,79 @@ exports.deleteEvent = async (req, res) => {
   }
 };
 
-// Tham gia sự kiện
 exports.joinEvent = async (req, res) => {
   try {
     const { eventId } = req.params;
     const { userId } = req.body;
 
+    // Kiểm tra userId hợp lệ
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ message: "Invalid userId" });
+    }
+
     const event = await Event.findById(eventId);
     if (!event) return res.status(404).json({ message: "Event not found" });
 
-    // Kiểm tra nếu user đã tham gia
-    if (event.participants.includes(userId)) {
+    const userIdStr = userId.toString();
+
+    // Kiểm tra xem user đã tham gia chưa
+    if (event.participants.map(p => p.toString()).includes(userIdStr)) {
       return res.status(400).json({ message: "User already joined this event" });
     }
 
-    // Nếu có giới hạn số lượng
+    // Kiểm tra giới hạn số lượng
     if (event.capacity && event.participants.length >= event.capacity) {
       return res.status(400).json({ message: "Event is full" });
     }
 
-    event.participants.push(userId);
+    // Thêm userId vào participants
+    event.participants.push(new mongoose.Types.ObjectId(userId));
     await event.save();
+
+    // Populate participants để trả về thông tin người dùng
+    await event.populate("participants", "name email");
 
     res.json({ message: "Joined event successfully", event });
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: error.message });
   }
 };
-// Rời khỏi sự kiện (hủy đăng ký)
+
+// ==========================
+// Rời khỏi sự kiện
+// ==========================
 exports.leaveEvent = async (req, res) => {
   try {
     const { eventId } = req.params;
     const { userId } = req.body;
 
+    // Kiểm tra userId hợp lệ
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ message: "Invalid userId" });
+    }
+
     const event = await Event.findById(eventId);
     if (!event) return res.status(404).json({ message: "Event not found" });
 
-    // Kiểm tra nếu user chưa tham gia
-    if (!event.participants.includes(userId)) {
+    const userIdStr = userId.toString();
+
+    // Kiểm tra xem user đã tham gia chưa
+    if (!event.participants.map(p => p.toString()).includes(userIdStr)) {
       return res.status(400).json({ message: "User has not joined this event" });
     }
 
-    // Xóa user khỏi danh sách participants
-    event.participants = event.participants.filter(
-      (id) => id.toString() !== userId
-    );
+    // Loại bỏ userId khỏi participants
+    event.participants = event.participants.filter(p => p.toString() !== userIdStr);
     await event.save();
+
+    // Populate participants để trả về thông tin người dùng
+    await event.populate("participants", "name email");
 
     res.json({ message: "Left event successfully", event });
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: error.message });
   }
 };
-
 

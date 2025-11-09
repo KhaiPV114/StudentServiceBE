@@ -8,6 +8,7 @@ module.exports = {
   signAccessToken: (user) => {
     return new Promise((resolve, reject) => {
       const payload = {
+        id: user._id, 
         email: user.email,
         name: user.name,
         role: user.role,
