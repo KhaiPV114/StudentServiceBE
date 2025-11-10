@@ -235,7 +235,7 @@ roomBookingRouter.get('/check', RoomBookingController.checkDuplicateBooking);
 roomBookingRouter.get('/', RoomBookingController.getAllRoomBookings);
 roomBookingRouter.post('/', RoomBookingController.createRoomBooking);
 roomBookingRouter.get('/:id', RoomBookingController.getRoomBookingById);
-roomBookingRouter.delete('/:id', RoomBookingController.cancelRoomBooking);
+roomBookingRouter.post('/:id/cancel', RoomBookingController.cancelRoomBooking);
 roomBookingRouter.post('/:id/approve', RoomBookingController.approveBooking);
 roomBookingRouter.post('/:id/reject', RoomBookingController.rejectBooking);
 //get bookings by slotId

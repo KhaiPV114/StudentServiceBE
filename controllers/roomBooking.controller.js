@@ -100,6 +100,8 @@ module.exports = {
   // CANCEL booking
   cancelRoomBooking: async (req, res) => {
     try {
+      console.log("id: " + req.params.id );
+      
       const booking = await RoomBooking.findById(req.params.id);
       if (!booking)
         return res
@@ -184,6 +186,8 @@ module.exports = {
       return res.status(500).json({ success: false, message: err.message });
     }
   },
+
+
 
   // Check duplicate booking (availability)
   // Example: GET /roombookings/check?roomId=...&slotId=...&date=YYYY-MM-DD
