@@ -112,7 +112,7 @@ module.exports = {
                 return next(createError(404, 'User not found'));
             }
 
-            res.json(user);
+            res.json(user); 
         } catch (error) {
             if (error.name === 'ValidationError') {
                 return next(createError(400, error.message));

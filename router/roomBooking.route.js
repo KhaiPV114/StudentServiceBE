@@ -18,5 +18,7 @@ roomBookingRouter.post('/:id/approve', RoomBookingController.approveBooking);
 roomBookingRouter.post('/:id/reject', RoomBookingController.rejectBooking);
 //get bookings by slotId
 roomBookingRouter.get('/slot/:slotId', RoomBookingController.getRoomBookingsBySlotId);
+//get by userID
+roomBookingRouter.get('/:userId/user', RoomBookingController.getRoomBookingByUserId)
 
 module.exports = roomBookingRouter;

@@ -222,5 +222,26 @@ module.exports = {
     }
   },
 
+  //get roombooking by user 
+  getRoomBookingByUserId: async (req, res) => {
+    try {      
+      const {userId} = req.params
+
+      const booking = await RoomBooking.find({userId})
+        .populate("userId", "name email role")
+        .populate("roomId", "name location")
+        .populate("slotId", "slotNumber name startTime endTime");
+
+      if (!booking)
+        return res
+          .status(404)
+          .json({ success: false, message: "Booking not found111" });
+
+      res.status(200).json( booking );
+    } catch (err) {
+      res.status(500).json({ success: false, message: err.message });
+    }
+  },
+
   
 };
