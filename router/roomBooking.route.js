@@ -96,14 +96,12 @@ const { RoomBookingController } = require('../controllers');
  *         schema:
  *           type: string
  *         description: "ID phòng cần kiểm tra"
- *         example: "672f12c5e31fbc7b57b1a010"
  *       - in: query
  *         name: slotId
  *         required: true
  *         schema:
  *           type: string
  *         description: "ID slot (khung giờ)"
- *         example: "671f12c5e31fbc7b57b1a020"
  *       - in: query
  *         name: date
  *         required: true
@@ -111,19 +109,9 @@ const { RoomBookingController } = require('../controllers');
  *           type: string
  *           format: date
  *         description: "Ngày muốn đặt (YYYY-MM-DD)"
- *         example: "2025-11-22"
  *     responses:
  *       200:
  *         description: "Trả về { available: true/false, reason? }"
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 available:
- *                   type: boolean
- *                 reason:
- *                   type: string
  *       400:
  *         description: "Thiếu tham số hoặc sai định dạng"
  */
@@ -140,14 +128,9 @@ const { RoomBookingController } = require('../controllers');
  *         required: true
  *         schema:
  *           type: string
- *         description: "ID của lượt đặt phòng"
  *     responses:
  *       200:
  *         description: "Thông tin chi tiết lượt đặt phòng"
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/RoomBooking'
  *       404:
  *         description: "Không tìm thấy lượt đặt phòng"
  *   delete:
@@ -159,7 +142,6 @@ const { RoomBookingController } = require('../controllers');
  *         required: true
  *         schema:
  *           type: string
- *         description: "ID của lượt đặt phòng"
  *     responses:
  *       200:
  *         description: "Hủy đặt phòng thành công"
@@ -179,7 +161,6 @@ const { RoomBookingController } = require('../controllers');
  *         required: true
  *         schema:
  *           type: string
- *         description: "ID của lượt đặt phòng"
  *     requestBody:
  *       required: false
  *       content:
@@ -206,7 +187,6 @@ const { RoomBookingController } = require('../controllers');
  *         required: true
  *         schema:
  *           type: string
- *         description: "ID của lượt đặt phòng"
  *     requestBody:
  *       required: true
  *       content:
@@ -228,19 +208,55 @@ const { RoomBookingController } = require('../controllers');
  *         description: "Không tìm thấy lượt đặt phòng"
  */
 
-// Đặt route /check trước route '/:id' để tránh bị nhầm route param
-roomBookingRouter.get('/check', RoomBookingController.checkDuplicateBooking);
+/**
+ * @swagger
+ * /roomBookings/slot/{slotId}:
+ *   get:
+ *     summary: "Lấy danh sách các lượt đặt phòng theo slotId"
+ *     tags: [RoomBooking]
+ *     parameters:
+ *       - in: path
+ *         name: slotId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: "ID của slot (khung giờ)"
+ *     responses:
+ *       200:
+ *         description: "Danh sách đặt phòng theo slot"
+ *       404:
+ *         description: "Không tìm thấy slot hoặc không có đặt phòng"
+ */
 
-// Routes
+/**
+ * @swagger
+ * /roomBookings/{userId}/user:
+ *   get:
+ *     summary: "Lấy danh sách đặt phòng của một người dùng"
+ *     tags: [RoomBooking]
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: "ID người dùng"
+ *     responses:
+ *       200:
+ *         description: "Danh sách đặt phòng của người dùng"
+ *       404:
+ *         description: "Không tìm thấy người dùng hoặc không có lượt đặt"
+ */
+
+// ⚙️ Routes
+roomBookingRouter.get('/check', RoomBookingController.checkDuplicateBooking);
 roomBookingRouter.get('/', RoomBookingController.getAllRoomBookings);
 roomBookingRouter.post('/', RoomBookingController.createRoomBooking);
 roomBookingRouter.get('/:id', RoomBookingController.getRoomBookingById);
 roomBookingRouter.post('/:id/cancel', RoomBookingController.cancelRoomBooking);
 roomBookingRouter.post('/:id/approve', RoomBookingController.approveBooking);
 roomBookingRouter.post('/:id/reject', RoomBookingController.rejectBooking);
-//get bookings by slotId
 roomBookingRouter.get('/slot/:slotId', RoomBookingController.getRoomBookingsBySlotId);
-//get by userID
-roomBookingRouter.get('/:userId/user', RoomBookingController.getRoomBookingByUserId)
+roomBookingRouter.get('/:userId/user', RoomBookingController.getRoomBookingByUserId);
 
 module.exports = roomBookingRouter;
